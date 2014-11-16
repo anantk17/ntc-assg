@@ -1,7 +1,9 @@
 ntc-assg
 ========
 
-Number Theory &amp; Cryptography Course Project Monsoon Semester 2014-2015
+Number Theory &amp; Cryptography Course Project 
+
+Monsoon Semester 2014-2015
 
 Project Objective:
 
@@ -11,6 +13,12 @@ Project Objective:
   3. Implement a key agreement algorithm for the system
 
 2. Implement Elgamal Cryptosystem
+3. Presentation on OpenSSH
+  1. Working Demonstration
+  2. Applications
+  3. Positives
+  4. Negatives
+  5. Improvements
 
 Collaborators:
 * Anant Kandikuppa
