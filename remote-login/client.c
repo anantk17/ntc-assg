@@ -8,6 +8,17 @@
 char *socket_path = "\0hidden";
 
 int main(int argc, char *argv[]) {
+  char username[100];
+  char* password;
+  
+  //Take username and password from STDIN
+  //Password is taken using getpass to prevent password from being displayed on screen
+
+  printf("Enter username: ");
+  scanf("%s",username);
+  printf("\n");
+  password = getpass("Enter password: ");
+  printf("\n");
   struct sockaddr_un addr;
   char buf[100];
   int fd,rc;
@@ -22,36 +33,37 @@ int main(int argc, char *argv[]) {
   memset(&addr, 0, sizeof(addr));
   addr.sun_family = AF_UNIX;
   strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
-
+  
+  //Connect to server
+  
   if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
     perror("connect error");
     printf("Error");
     exit(-1);
   }
+  
+  //Create authentication string
+  //Format: auth$username$password
+  //username and password should not contain $
 
     char auth[] = "auth$";
     char user[100];
-    //strncpy(user,"anant",sizeof("anant")-1);
     strcpy(user,"anant");
     char pass[100];
     strcpy(pass,"pass");
-    //strncpy(user,"pass",sizeof("anant")-1);
     
     char auth_msg[256];
     strncpy(auth_msg,auth,sizeof(auth)-1);
     strcat(user,"$");
-    //printf("%s",user);
     strcat(auth_msg,user);
     strcat(auth_msg,pass);
-    //printf("%s",auth_msg);
-    //rc = write(fd,user,sizeof(user) - 1);
+
+    //Write the authentication string on socket
+    //Wait for 1 byte return value
+
     rc = write(fd,auth_msg,sizeof(auth_msg) - 1); 
- // }i
     int logged_in = 0;
     while(rc=read(fd,buf,1) > 0){
-        //printf("%c",buf[0]);
-        //sscanf(buf,"%s%d",auth_status,&status); 
-        //printf("%d",status);
         if(buf[0] == '1'){
             printf("Login Successful\n");
             fflush(stdout);
@@ -64,29 +76,35 @@ int main(int argc, char *argv[]) {
             exit(-1);
         }
     }
-
-  printf("Connected to ECHO Server.\n ");
-  fflush(stdout);
+ 
   if(logged_in){
-  /*while( (rc=read(STDIN_FILENO, buf, sizeof(buf))) > 0) {
-    if (write(fd, buf, rc) != rc) {
-      if (rc > 0) fprintf(stderr,"partial write");
-      else {
-        perror("write error");
-        exit(-1);
-      }
-    }
-    rc = read(fd,buf,sizeof(buf));
-    printf("Server replied : %s",buf);
-    printf("Write Message: ");
-  }*/
+    printf("Connected to ECHO Server.Enter exit to exit\n ");
+    fflush(stdout);
+    
+    //Read input from user
+    //Write input to socket
+    //Read returned data from socket
+    //Print returned data on screen
+
     while(1)
-    { 
+        {
+        char temp_buf[10];
         printf("Enter Message: ");
         fflush(stdout);
         rc = read(STDIN_FILENO,buf,sizeof(buf));
-        printf("Server returned : %s", buf);
+        sscanf(buf,"%s",temp_buf);
         write(fd,buf,rc);
+        //If entered text is exit, close connection
+        if(!strcmp(temp_buf,"exit"))
+        {
+            
+            int ret = shutdown(fd,0);
+            return 0;
+        }
+        rc = read(fd, buf,sizeof(buf));
+        printf("Server returned : %s", buf);
+        bzero(buf,sizeof(buf));
+
         printf("\n");
 
     }

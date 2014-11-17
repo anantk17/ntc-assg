@@ -39,17 +39,19 @@ int main(int argc, char *argv[]) {
       perror("accept error");
       continue;
     }
-
+    
     char* username = (char *)malloc(100 * sizeof(char));
     char* password = (char *)malloc(100*sizeof(char));
     char auth[6];
     
+    //Wait in loop for authentication string
+
     while(rc = read(cl,buf,sizeof(buf)) > 0){
         char auth_status[20];
-       //printf("\nbuffer : %s",buf);
         if(rc >= 0){
+            //Read the username and password from the socket buffer
             sscanf(buf,"%[^$]$%[^$]$%s",auth,username,password);
-            //printf("\n%s\t %s\t %s",auth,username,password);
+            //If the username and password matches, log the user in, otherwise close the connection 
             if(!strcmp(username,"anant") && !strcmp(password,"pass"))
             {
                 strcpy(auth_status,"1");
@@ -64,25 +66,41 @@ int main(int argc, char *argv[]) {
                 write(cl, auth_status,1);
                 printf("User %s failed to login\n",username);
                 fflush(stdout);
-                exit(-1);
+                shutdown(cl,2);
             }
         }
     } 
     bzero(buf,sizeof(buf));
-    while ( 1){
-      rc=read(cl,buf,sizeof(buf)); {
+    //Wait in loop for the data from client
+    //Print data from client
+    //Write the same data onto the socket
+    
+    while (1){
+      rc=read(cl,buf,sizeof(buf)); 
+      char temp_buf[10];
+      //If recieved data is "exit", log the user out, and close the connection
+      sscanf(buf,"%s",temp_buf);
+      if(!strcmp(temp_buf,"exit"))
+      {
+        printf("User %s logged out\n",username);
+        fflush(stdout);
+        int ret = shutdown(cl,0);
+        break;
+      }
       printf("Read: %s\n", buf);
       fflush(stdout);
       write(cl,buf,sizeof(buf));
       printf("Returned: %s\n", buf);
+      bzero(buf,sizeof(buf));
       fflush(stdout);
-    }
+    
     if (rc == -1) {
       perror("read");
+      printf("H");
       exit(-1);
     }
     else if (rc == 0) {
-      printf("EOF\n");
+      fflush(stdout);
       close(cl);
     }
     }
