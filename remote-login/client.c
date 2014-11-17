@@ -16,9 +16,10 @@ int main(int argc, char *argv[]) {
 
   printf("Enter username: ");
   scanf("%s",username);
-  printf("\n");
+  printf("%s\n",username);
   password = getpass("Enter password: ");
   printf("\n");
+  printf("%s", password);
   struct sockaddr_un addr;
   char buf[100];
   int fd,rc;
@@ -47,16 +48,20 @@ int main(int argc, char *argv[]) {
   //username and password should not contain $
 
     char auth[] = "auth$";
-    char user[100];
-    strcpy(user,"anant");
-    char pass[100];
-    strcpy(pass,"pass");
+//    char user[100];
+//    strcpy(user,"anant");
+//    char pass[100];
+//    strcpy(pass,"pass");
     
     char auth_msg[256];
-    strncpy(auth_msg,auth,sizeof(auth)-1);
-    strcat(user,"$");
-    strcat(auth_msg,user);
-    strcat(auth_msg,pass);
+//    strncpy(auth_msg,auth,sizeof(auth)-1);
+//    strcat(username,"$");//
+//    printf("%s",username);
+//    strcat(auth_msg,username);
+//    printf("%s- auth_msg", auth_msg);
+//    strcat(auth_msg,password);
+    sprintf(auth_msg, "auth$%s$%s", username, password);   
+    printf("auth-%s", auth_msg);
 
     //Write the authentication string on socket
     //Wait for 1 byte return value
