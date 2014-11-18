@@ -90,7 +90,7 @@ namespace custom
             buffer.assign(temp_buff.begin(),temp_buff.end());
         }
     }
-
+    
     bool authenticate(int fd, string username, string password)
     {
         string auth_string = custom::getauthstring(username,password);
@@ -103,4 +103,6 @@ namespace custom
         else
             return true;        
     }
+
+
 }

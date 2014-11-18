@@ -3,8 +3,9 @@
 #include<string>
 #include<fstream>
 #include<sstream>
+#include<sys/socket.h>
 #include <openssl/sha.h>
-
+#include "crypto.cpp"
 #define filename "users"
 
 using namespace std;
@@ -51,7 +52,7 @@ void add_user(string username, string password, vector<User> *e) {	//adding user
 
 bool exists(User u, vector<User> e) {	//checking if it is valid user
 	for(int i=0; i<(int)e.size(); ++i)
-		if(u.username==e[i].username && u.password==e[i].password)
+		if(u.username==e[i].username && custom::sha1(u.password)==e[i].password)
 			return true;
 	return false;
 }
@@ -86,24 +87,6 @@ User parseauthstring(string auth_string)
 
         return u;
     }
-    
-}
 
-string sha1(string password) {
-	unsigned char obuf[20];
-	SHA1((unsigned char*)password.c_str(), password.size(), obuf);
-	string s="";
-	
-	int i;
-	
- 	for (i = 0; i < 20; i++) {
- 		s+=obuf[i];
-        }
-        
-	stringstream ss;
-	for(int i=0; i<20; ++i)
-	    ss << std::hex << (int)obuf[i];
-	string mystr = ss.str();
-    return mystr;
 }
 

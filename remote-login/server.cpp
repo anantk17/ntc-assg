@@ -4,7 +4,6 @@
 #include <sys/un.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-
 #include "utility.cpp"
 #include "user.cpp"
 
@@ -20,7 +19,9 @@ int main(int argc, char *argv[]) {
   int fd,cl,rc;
   unsigned int portno;
   
+  
   vector<User> user_list = custom::get_users_from_file();
+  cout << user_list[0].username<<endl;
 
   if ( (fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     perror("socket error");
@@ -64,7 +65,6 @@ int main(int argc, char *argv[]) {
         buffer.assign("0");
         rc = custom::cppwrite(cl,buffer);
         cout << "Failed login attempt" << endl;
-        //shutdown(cl,2);
         close(cl);
         return 0;
     }

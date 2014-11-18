@@ -11,9 +11,6 @@
 //Includes wrapper functions to use c++ style strings with sockets
 #include "utility.cpp"
 
-//char *socket_path = "./socket";
-//char *socket_path = "\0hidden";
-
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -35,7 +32,6 @@ int main(int argc, char *argv[]) {
 
   int fd,rc;
 
- // if (argc > 1) socket_path=argv[1];
   int portno = atoi(argv[2]);
 
   if ( (fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -53,8 +49,6 @@ int main(int argc, char *argv[]) {
   serv_addr.sin_family = AF_INET;
   bcopy((char*)server->h_addr,(char*)&serv_addr.sin_addr.s_addr,server->h_length);
   serv_addr.sin_port = htons(portno);
-
-  //strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
   
   //Connect to server
   
@@ -67,8 +61,6 @@ int main(int argc, char *argv[]) {
   //Create authentication string
   //Format: auth$username$password
   //username and password should not contain $
-
-    //string auth_string = custom::getauthstring(username,password);
     
     int logged_in = custom::authenticate(fd, username, password); 
    
