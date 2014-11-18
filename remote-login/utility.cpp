@@ -9,16 +9,9 @@
 #include <vector>
 #include <cstdlib>
 
-
 #define BUFFER_SIZE 256
 
 using namespace std;
-
-struct User 
-{
-    string username;
-    string password;
-};
 
 namespace custom
 {
@@ -76,36 +69,7 @@ namespace custom
         return auth_string;
     }
     
-    User parseauthstring(string auth_string)
-    {
-        User u;
-        size_t pos;
-        string delimiter = "$";
-        pos = auth_string.find(delimiter);
-        if(pos != string::npos)
-        {
-            auth_string.erase(0,pos+delimiter.length());
-            pos = auth_string.find(delimiter);
-            if(pos != string::npos)
-            {
-                u.username = auth_string.substr(0,pos);
-                auth_string.erase(0, pos+delimiter.length());
-                u.password = auth_string;
-            }
-            else
-            {
-                u.username = "";
-                u.password = "";
-            }
-        }
-        else
-        {
-            u.username = "";
-            u.password = "";
-        }
-
-        return u;
-    }
+    
     int cppwrite(int fd, string buffer)
     {
         unsigned char bytes = buffer.length();
@@ -133,8 +97,10 @@ namespace custom
         string buffer;
         int rc = cppwrite(fd, auth_string);
         rc = cppread(fd, buffer);
-
-        return buffer[0];
         
+        if(buffer == "0")
+            return false;
+        else
+            return true;        
     }
 }

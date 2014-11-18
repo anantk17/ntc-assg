@@ -3,20 +3,19 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdlib.h>
+
 #include "utility.cpp"
+#include "user.cpp"
 
 char *socket_path = "\0hidden";
 
 using namespace std;
 
-bool exists(User u)
-{
-    return (u.username== "anant" and u.password=="pass");
-}
-
 int main(int argc, char *argv[]) {
   struct sockaddr_un addr;
   int fd,cl,rc;
+  
+  vector<User> user_list = custom::get_users_from_file();
 
   if (argc > 1) socket_path=argv[1];
 
@@ -49,9 +48,8 @@ int main(int argc, char *argv[]) {
     
     string username, password,buffer;
     rc = custom::cppread(cl, buffer);
-    User u = custom::parseauthstring(buffer);
-    
-    if(exists(u))
+    User u = custom::parseauthstring(buffer); 
+    if(custom::exists(u,user_list))
     {
         buffer.assign("1");
         rc = custom::cppwrite(cl,buffer);
