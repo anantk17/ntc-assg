@@ -52,7 +52,7 @@ void add_user(string username, string password, vector<User> *e) {	//adding user
 
 bool exists(User u, vector<User> e) {	//checking if it is valid user
 	for(int i=0; i<(int)e.size(); ++i)
-		if(u.username==e[i].username && custom::sha1(u.password)==e[i].password)
+		if(u.username==e[i].username && custom::cppsha1(u.password)==e[i].password)
 			return true;
 	return false;
 }

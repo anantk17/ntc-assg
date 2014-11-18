@@ -1,13 +1,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <openssl/sha.h>
+#include "polarssl/sha1.h"
 
 using namespace std;
 namespace custom{
-string sha1(string text) {
+string cppsha1(string text) {
 	unsigned char obuf[20];
-	SHA1((unsigned char*)text.c_str(), text.size(), obuf);
+	sha1((unsigned char*)text.c_str(), text.size(), obuf);
 	string s="";
 	
 	int i;
