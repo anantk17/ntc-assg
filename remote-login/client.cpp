@@ -1,15 +1,18 @@
+#include <netdb.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/types.h>
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
 #include <string>
+#include <netinet/in.h>
 
 //Includes wrapper functions to use c++ style strings with sockets
 #include "utility.cpp"
 
 //char *socket_path = "./socket";
-char *socket_path = "\0hidden";
+//char *socket_path = "\0hidden";
 
 using namespace std;
 
@@ -26,23 +29,36 @@ int main(int argc, char *argv[]) {
   int c = getchar();
   string password = custom::getpass("Enter password: ");
   cout << endl;
-  struct sockaddr_un addr;
+  
+  struct sockaddr_in serv_addr;
+  struct hostent *server;
+
   int fd,rc;
 
-  if (argc > 1) socket_path=argv[1];
+ // if (argc > 1) socket_path=argv[1];
+  int portno = atoi(argv[2]);
 
-  if ( (fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+  if ( (fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     perror("socket error");
     exit(-1);
   }
+  
+  server = gethostbyname(argv[1]);
+  if(server == NULL) {
+        perror("No such host");
+        exit(1);
+    }
+    
+  memset(&serv_addr, 0, sizeof(serv_addr));
+  serv_addr.sin_family = AF_INET;
+  bcopy((char*)server->h_addr,(char*)&serv_addr.sin_addr.s_addr,server->h_length);
+  serv_addr.sin_port = htons(portno);
 
-  memset(&addr, 0, sizeof(addr));
-  addr.sun_family = AF_UNIX;
-  strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+  //strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
   
   //Connect to server
   
-  if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+  if (connect(fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
     perror("connect error");
     printf("Error");
     exit(-1);

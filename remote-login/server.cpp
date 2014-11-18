@@ -3,34 +3,37 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdlib.h>
+#include <netinet/in.h>
 
 #include "utility.cpp"
 #include "user.cpp"
+
 
 char *socket_path = "\0hidden";
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  struct sockaddr_un addr;
+
+  struct sockaddr_in serv_addr, cli_addr;
+
   int fd,cl,rc;
+  unsigned int portno;
   
   vector<User> user_list = custom::get_users_from_file();
 
-  if (argc > 1) socket_path=argv[1];
-
-  if ( (fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+  if ( (fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     perror("socket error");
     exit(-1);
   }
 
-  memset(&addr, 0, sizeof(addr));
-  addr.sun_family = AF_UNIX;
-  strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+  bzero((char *)&serv_addr, sizeof(serv_addr));
+  portno = 5001;
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_addr.s_addr = INADDR_ANY;
+  serv_addr.sin_port = htons(portno);
 
-  unlink(socket_path);
-
-  if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+  if (bind(fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
     perror("bind error");
     exit(-1);
   }
@@ -39,13 +42,14 @@ int main(int argc, char *argv[]) {
     perror("listen error");
     exit(-1);
   }
-
+  unsigned int clilen = sizeof(cli_addr);
   while (1) {
-    if ( (cl = accept(fd, NULL, NULL)) == -1) {
+    if ( ( cl = accept(fd, (struct sockaddr*)&cli_addr, &clilen)) == -1) {
       perror("accept error");
       continue;
     }
-    
+    if(fork()== 0){
+    close(fd);
     string username, password,buffer;
     rc = custom::cppread(cl, buffer);
     User u = custom::parseauthstring(buffer); 
@@ -60,8 +64,9 @@ int main(int argc, char *argv[]) {
         buffer.assign("0");
         rc = custom::cppwrite(cl,buffer);
         cout << "Failed login attempt" << endl;
-        shutdown(cl,2);
-        continue;
+        //shutdown(cl,2);
+        close(cl);
+        return 0;
     }
 
     buffer.clear();
@@ -74,8 +79,8 @@ int main(int argc, char *argv[]) {
             if(buffer == "exit")
             {
                 cout << "User "<<u.username<<" logged out"<<endl;
-                shutdown(cl,2);
-                break;
+                close(cl);
+                return 0;
             }
             cout << "Read : " << buffer <<  endl;
             rc = custom::cppwrite(cl,buffer);
@@ -88,10 +93,11 @@ int main(int argc, char *argv[]) {
         if(rc == -1)
         {
             perror("socket i/o error");
-            shutdown(cl,2);
+            close(2);
         }
     }
+    }
   }
+  close(fd);
   return 0;
 }
-
