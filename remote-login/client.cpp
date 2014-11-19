@@ -11,8 +11,6 @@
 //Includes wrapper functions to use c++ style strings with sockets
 #include "utility.cpp"
 
-unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 60, 78, 13, 191, 219, 84, 13, 121, 195, 161, 97, 151, 243, 207, 35, 194, 227, 65, 74, 70, 35};
-
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -64,7 +62,7 @@ int main(int argc, char *argv[]) {
   //Format: auth$username$password
   //username and password should not contain $
     
-    int logged_in = custom::authenticate(fd, username, password); 
+    int logged_in = custom::authenticate(fd, username,password); 
    
     if(logged_in)
     {
@@ -77,14 +75,14 @@ int main(int argc, char *argv[]) {
                 cout << "Enter text: " << endl;
                 getline(cin,readbuffer);
                 int rc;
-                rc = custom::cppwrite(fd, readbuffer);
+                rc = custom::cpp_enc_write(fd, readbuffer);
                 if(readbuffer == "exit")
                 {
                     int ret = shutdown(fd, 0);
                     return 0;
                 }
                 cout << "Server Returned: " << endl;
-                rc = custom::cppread(fd, writebuffer);
+                rc = custom::cpp_dec_read(fd, writebuffer);
                 cout << writebuffer << endl;
                 readbuffer.clear();
                 writebuffer.clear();

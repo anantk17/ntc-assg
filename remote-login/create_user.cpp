@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "user.cpp"
+#include "crypto.cpp"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ int main()
     
     ofstream file(file_name, ios::app);
     file << username<<endl; 
-    file << custom::sha1(password)<<endl;
+    file << custom::cppsha1(password)<<endl;
     
     return 0;
 

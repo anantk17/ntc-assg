@@ -8,6 +8,9 @@
 
 #include<iostream>
 
+unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 60, 78, 13, 191, 219, 84, 13, 121, 195, 161, 97, 151, 243, 207, 35, 194, 227, 65, 74, 70, 35};
+
+
 using namespace std;
 namespace custom{
 string cppsha1(string text) {
@@ -35,12 +38,11 @@ string encrypt(string plaintext, unsigned char key[32]) {
 	entropy_context entropy;
 	char *pers = "aes_generate_key";
 	entropy_init(&entropy);
-//	unsigned char buff[2][64] = {"ABCDEFGHIJKLMNOP", ""};
 	unsigned char buff[64], buff_out[64];
 	memset(buff, 0, sizeof(buff));
 	for(int i=0; i<plaintext.length(); ++i) {
 		buff[i] = plaintext[i];
-	}
+}
 	int ret;
     if ((ret = ctr_drbg_init(&ctr_drbg,entropy_func,&entropy,(unsigned char*)pers, strlen(pers))) != 0)
     {
@@ -86,7 +88,7 @@ string decrypt(string ciphertext, unsigned char key[32]) {
     aes_crypt_cbc(&enc_ctx, AES_DECRYPT, 64, IV, buff, buff_out);
     
     string de;
-    for(int i=0; i<64; ++i)
+    for(int i=0; i<64 && buff_out[i]!=0; ++i)
     	de.push_back(buff_out[i]);
     return de;
 }

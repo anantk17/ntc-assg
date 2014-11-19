@@ -5,8 +5,9 @@
 #include<sstream>
 #include<sys/socket.h>
 #include <openssl/sha.h>
-#include "crypto.cpp"
+
 #define filename "users"
+#include "utility.cpp"
 
 using namespace std;
 
@@ -51,9 +52,13 @@ void add_user(string username, string password, vector<User> *e) {	//adding user
 }
 
 bool exists(User u, vector<User> e) {	//checking if it is valid user
-	for(int i=0; i<(int)e.size(); ++i)
+	cout << u.username << " " << u.password << endl;
+    for(int i=0; i<(int)e.size(); ++i)
+    {   
+        cout << "!"<<endl;
 		if(u.username==e[i].username && custom::cppsha1(u.password)==e[i].password)
 			return true;
+    }
 	return false;
 }
 
@@ -71,7 +76,16 @@ User parseauthstring(string auth_string)
             {
                 u.username = auth_string.substr(0,pos);
                 auth_string.erase(0, pos+delimiter.length());
-                u.password = auth_string;
+                pos = auth_string.find(delimiter);
+                if(pos != string::npos)
+                {
+                    u.password = auth_string.substr(0,pos);
+                }
+                else
+                {
+                    u.username = "";
+                    u.password = "";
+                }
             }
             else
             {
