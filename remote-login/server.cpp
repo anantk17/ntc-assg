@@ -9,7 +9,7 @@
 
 
 char *socket_path = "\0hidden";
-
+unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 60, 78, 13, 191, 219, 84, 13, 121, 195, 161, 97, 151, 243, 207, 35, 194, 227, 65, 74, 70, 35};
 using namespace std;
 
 int main(int argc, char *argv[]) {

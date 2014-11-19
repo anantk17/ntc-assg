@@ -57,5 +57,9 @@ int main()
     //decrypt
     aes_crypt_cbc(&dec_ctx, AES_DECRYPT, 64, IV2, buff[1],buff[0]);
     printf("After decrypt:%s\n", buff[0]);
+    
+	for( i=0;i<32;i++)
+        	printf("%02x", key[i]);
+    printf("\n");    
     return 0;
 }
