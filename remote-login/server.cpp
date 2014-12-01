@@ -4,6 +4,9 @@
 #include <sys/un.h>
 #include <stdlib.h>
 #include <netinet/in.h>
+#include <polarssl/dhm.h>
+#include <polarssl/entropy.h>
+#include <polarssl/ctr_drbg.h>
 
 #include "user.cpp"
 
@@ -23,7 +26,12 @@ int main(int argc, char *argv[]) {
   vector<User> user_list = custom::get_users_from_file();
   cout << user_list[0].username<<endl;
   cout << user_list[1].username<<endl;
-
+  
+  constant char  *pers = "dh_server";
+  entropy_context entropy;
+  ctr_drbg_context ctr_drbg;
+  dhm_context dhm;
+  
   if ( (fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     perror("socket error");
     exit(-1);

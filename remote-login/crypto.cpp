@@ -1,10 +1,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "polarss
 #include "polarssl/sha1.h"
-#include <polarssl/aes.h>
-#include <polarssl/entropy.h>
-#include <polarssl/ctr_drbg.h>
+#include "polarssl/aes.h"
+#include "polarssl/entropy.h"
+#include "polarssl/ctr_drbg.h"
 
 #include<iostream>
 
@@ -13,6 +14,8 @@ unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 6
 
 using namespace std;
 namespace custom{
+
+void setup_rng(
 string cppsha1(string text) {
 	unsigned char obuf[20];
 	sha1((unsigned char*)text.c_str(), text.size(), obuf);
@@ -92,4 +95,6 @@ string decrypt(string ciphertext, unsigned char key[32]) {
     	de.push_back(buff_out[i]);
     return de;
 }
+
+
 }
