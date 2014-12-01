@@ -52,7 +52,7 @@ void add_user(string username, string password, vector<User> *e) {	//adding user
 }
 
 bool exists(User u, vector<User> e) {	//checking if it is valid user
-	cout << u.username << " " << u.password << endl;
+	//cout << u.username << " " << u.password << endl;
     for(int i=0; i<(int)e.size(); ++i)
     {   
         cout << "!"<<endl;

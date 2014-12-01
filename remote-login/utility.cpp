@@ -72,7 +72,7 @@ namespace custom
     }
     
     
-    int cpp_enc_write(int fd, string buffer)
+    int cpp_enc_write(int fd, string buffer, unsigned char* key)
     {
         string enc_buffer = custom::encrypt(buffer,key);
         unsigned char bytes = enc_buffer.length();
@@ -100,7 +100,7 @@ namespace custom
         }
         return rc;
     }
-    int cpp_dec_read(int fd, string& buffer)
+    int cpp_dec_read(int fd, string& buffer, unsigned char* key)
     {
         string enc_buffer;
         unsigned char bytes;
@@ -113,6 +113,7 @@ namespace custom
         }
         string dec_buffer = custom::decrypt(enc_buffer,key);
         buffer.assign(dec_buffer.begin(),dec_buffer.end());
+        return rc;
     }
 
     int cppread(int fd, string& buffer)
@@ -125,15 +126,16 @@ namespace custom
             rc = read(fd, temp_buff.data(),bytes);
             buffer.assign(temp_buff.begin(),temp_buff.end());
         }
+        return rc;
     }   
     
-    bool authenticate(int fd, string username, string password)
+    bool authenticate(int fd, string username, string password, unsigned char* key)
     {
         string auth_string = custom::getauthstring(username,password);
         string buffer;
         //string enc_auth_string = custom::encrypt(auth_string,key);
-        int rc = cpp_enc_write(fd, auth_string);
-        rc = cpp_dec_read(fd, buffer);
+        int rc = cpp_enc_write(fd, auth_string, key);
+        rc = cpp_dec_read(fd, buffer, key);
         
         if(buffer[0] == '0')
             return false;

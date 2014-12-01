@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "polarss
+
 #include "polarssl/sha1.h"
 #include "polarssl/aes.h"
 #include "polarssl/entropy.h"
@@ -9,13 +9,12 @@
 
 #include<iostream>
 
-unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 60, 78, 13, 191, 219, 84, 13, 121, 195, 161, 97, 151, 243, 207, 35, 194, 227, 65, 74, 70, 35};
+//unsigned char key[32] = {54, 207, 140, 177, 126, 224, 252, 171, 112, 224, 200, 60, 78, 13, 191, 219, 84, 13, 121, 195, 161, 97, 151, 243, 207, 35, 194, 227, 65, 74, 70, 35};
 
 
 using namespace std;
 namespace custom{
 
-void setup_rng(
 string cppsha1(string text) {
 	unsigned char obuf[20];
 	sha1((unsigned char*)text.c_str(), text.size(), obuf);
